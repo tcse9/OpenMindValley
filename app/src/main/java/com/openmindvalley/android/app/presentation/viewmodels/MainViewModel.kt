@@ -4,10 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openmindvalley.android.app.R
 import com.openmindvalley.android.app.domain.use_case.MediaDataByUseCase
 import com.openmindvalley.android.app.presentation.state.MediaState
-import com.openmindvalley.android.app.repository.MediaRepository
 import com.openmindvalley.android.app.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -16,23 +14,68 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDataByUseCase) : ViewModel() {
-    private val _mediaState = mutableStateOf(MediaState(isLoading = false))
-    val mediaState: State<MediaState> = _mediaState
+    private val _mediaStateNewEpisode = mutableStateOf(MediaState(isLoading = false))
+    val mediaStateNewEpisode: State<MediaState> = _mediaStateNewEpisode
 
-    fun getMediaData(mediaType: String) {
+    private val _mediaStateChannel = mutableStateOf(MediaState(isLoading = false))
+    val mediaStateChannel: State<MediaState> = _mediaStateChannel
+
+    private val _mediaStateCategories = mutableStateOf(MediaState(isLoading = false))
+    val mediaStateCategories: State<MediaState> = _mediaStateCategories
+
+
+    fun getMediaNewEpisode(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _mediaState.value = MediaState(isLoading = true)
+                    _mediaStateNewEpisode.value = MediaState(isLoading = true)
                 }
 
-                is Resource.Error -> _mediaState.value = MediaState(
+                is Resource.Error -> _mediaStateNewEpisode.value = MediaState(
                     isLoading = false,
                     data = result.data,
                     errorMessage = result.message ?: "Error loading data"
                 )
 
-                is Resource.Success -> _mediaState.value =
+                is Resource.Success -> _mediaStateNewEpisode.value =
+                    MediaState(data = result.data, isLoading = false)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getMediaChannel(mediaType: String) {
+        mediaDataByUseCase(mediaType).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _mediaStateChannel.value = MediaState(isLoading = true)
+                }
+
+                is Resource.Error -> _mediaStateChannel.value = MediaState(
+                    isLoading = false,
+                    data = result.data,
+                    errorMessage = result.message ?: "Error loading data"
+                )
+
+                is Resource.Success -> _mediaStateChannel.value =
+                    MediaState(data = result.data, isLoading = false)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getMediaCategories(mediaType: String) {
+        mediaDataByUseCase(mediaType).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _mediaStateCategories.value = MediaState(isLoading = true)
+                }
+
+                is Resource.Error -> _mediaStateCategories.value = MediaState(
+                    isLoading = false,
+                    data = result.data,
+                    errorMessage = result.message ?: "Error loading data"
+                )
+
+                is Resource.Success -> _mediaStateCategories.value =
                     MediaState(data = result.data, isLoading = false)
             }
         }.launchIn(viewModelScope)

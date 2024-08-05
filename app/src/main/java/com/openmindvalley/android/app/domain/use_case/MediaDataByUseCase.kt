@@ -4,10 +4,10 @@ import android.content.Context
 import com.openmindvalley.android.app.data.remote.dto.toMediaCategories
 import com.openmindvalley.android.app.data.remote.dto.toMediaCourse
 import com.openmindvalley.android.app.data.remote.dto.toMediaNewEpisode
-import com.openmindvalley.android.app.data.remote.dto.toMediaSeries
-import com.openmindvalley.android.app.repository.MediaRepository
 import com.openmindvalley.android.app.domain.model.Media
+import com.openmindvalley.android.app.repository.MediaRepository
 import com.openmindvalley.android.app.utils.Resource
+import com.openmindvalley.android.app.utils.isNotNullOrEmpty
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -19,17 +19,13 @@ open class MediaDataByUseCase @Inject constructor(private val context: Context, 
         try {
             emit(Resource.Loading())
             val data = repository.getMediaData(mediaType = mediaType)
-            if (!data.data?.media.isNullOrEmpty()) {
+            if (data.data?.media.isNotNullOrEmpty()) {
                 emit(Resource.Success(data.data?.media.toMediaNewEpisode()))
-            } else if (!data.data?.channels.isNullOrEmpty()){
+            } else if (data.data?.channels.isNotNullOrEmpty()){
                 data.data?.channels?.forEach {
-                    if (it?.series.isNullOrEmpty()) {
-                        emit(Resource.Success(data.data.channels.toMediaCourse()))
-                    } else {
-                        emit(Resource.Success(it?.series.toMediaSeries()))
-                    }
+                    emit(Resource.Success(data.data.channels.toMediaCourse()))
                 }
-            } else if(!data.data?.categories.isNullOrEmpty()) {
+            } else if(data.data?.categories.isNotNullOrEmpty()) {
                 emit(Resource.Success(data.data?.categories.toMediaCategories()))
             }
 

@@ -22,6 +22,7 @@ coreKtxVersion = "1.6.1"
 junitKtx = "1.2.1"
 mockk = "1.13.12"
 kotlintest = "1.5.10"
+coil = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +67,8 @@ kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", vers
 room-runtime = { group = "androidx.room", name  = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name  = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name  = "room-ktx", version.ref = "room" }
+
+coil = { group = "io.coil-kt", name  = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

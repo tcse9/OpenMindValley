@@ -3,6 +3,7 @@ package com.openmindvalley.android.app.data.remote.dto
 import com.google.gson.annotations.SerializedName
 import com.openmindvalley.android.app.domain.model.Media
 import com.openmindvalley.android.app.domain.model.ThumbnailItem
+import com.openmindvalley.android.app.utils.isNotNullOrEmpty
 
 data class MediaDataDto(
 
@@ -129,36 +130,32 @@ fun List<MediaItem?>?.toMediaNewEpisode(): List<Media.NewEpisode> {
 	return listOf(Media.NewEpisode(title = "New Spisodes", list = thumbnailItems))
 }
 
-fun List<ChannelsItem?>?.toMediaCourse(): List<Media.Course> {
+fun List<ChannelsItem?>?.toMediaCourse(): List<Media> {
 	val mediaCourses = arrayListOf<Media.Course>()
-	this?.forEach {
+	this?.forEach { item ->
 		val thumbnailItems = arrayListOf<ThumbnailItem>()
-		thumbnailItems.add(
-			ThumbnailItem(
-				title = it?.title,
-				channelTitle = null,
-				thumbnailImage = it?.coverAsset?.url
+		item?.latestMedia?.forEach {
+			thumbnailItems.add(
+				ThumbnailItem(
+					isPortrait = !item.series.isNotNullOrEmpty(),
+					title = it?.title,
+					channelTitle = null,
+					thumbnailImage = it?.coverAsset?.url
+				)
+			)
+		}
+
+		mediaCourses.add(
+			Media.Course(
+				title = item?.title,
+				iconImage = null,
+				mediaCount = item?.mediaCount ?: 0,
+				list = thumbnailItems,
+				isSeries = item?.series.isNotNullOrEmpty()
 			)
 		)
-		mediaCourses.add(Media.Course(title = it?.title, iconImage = null, mediaCount = this.size, list = thumbnailItems))
 	}
 	return mediaCourses
-}
-
-fun List<SeriesItem?>?.toMediaSeries(): List<Media.Series> {
-	val mediaSerieses = arrayListOf<Media.Series>()
-	this?.forEach {
-		val thumbnailItems = arrayListOf<ThumbnailItem>()
-		thumbnailItems.add(
-			ThumbnailItem(
-				title = it?.title,
-				channelTitle = null,
-				thumbnailImage = it?.coverAsset?.url
-			)
-		)
-		mediaSerieses.add(Media.Series(title = it?.title, iconImage = null, mediaCount = this.size, list = thumbnailItems))
-	}
-	return mediaSerieses
 }
 
 fun List<CategoriesItem?>?.toMediaCategories(): List<Media.Category> {
