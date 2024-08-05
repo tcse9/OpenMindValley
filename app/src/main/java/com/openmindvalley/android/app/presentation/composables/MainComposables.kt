@@ -1,11 +1,13 @@
 package com.openmindvalley.android.app.presentation.composables
 
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,14 +54,14 @@ import com.openmindvalley.android.app.utils.isNotNullOrEmpty
 
 @Composable
 fun RootView(paddingValues: PaddingValues, viewModel: MainViewModel = hiltViewModel()) {
-    Channel(paddingValues = paddingValues, viewModel = viewModel)
+    Channel(modifier = Modifier.padding(paddingValues), viewModel = viewModel)
 }
 
 @Composable
-fun NewEpisode(modifier: Modifier, mediaList: List<Media>?) {
-    Column(modifier = modifier
+fun NewEpisode(mediaList: List<Media>?) {
+    Column(modifier = Modifier
         .fillMaxWidth()
-        .padding(start = 16.dp, end = 16.dp)) {
+        .padding(all = 16.dp)) {
         Text(text = "Channels",  style = MaterialTheme.typography.RootTitle)
         Spacer(modifier = Modifier.height(28.dp))
         Text(text = "New Episodes",  style = MaterialTheme.typography.SecondaryRootTitle)
@@ -79,11 +81,11 @@ fun NewEpisode(modifier: Modifier, mediaList: List<Media>?) {
 }
 
 @Composable
-fun Channel(paddingValues: PaddingValues, viewModel: MainViewModel) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+fun Channel(modifier: Modifier, viewModel: MainViewModel) {
+    LazyColumn(modifier = modifier.fillMaxSize()) {
         val newEpisode = viewModel.mediaStateNewEpisode.value.data
         item {
-            NewEpisode(modifier = Modifier.padding(paddingValues), newEpisode)
+            NewEpisode(mediaList = newEpisode)
         }
         item {
             HorizontalDivider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
@@ -92,10 +94,17 @@ fun Channel(paddingValues: PaddingValues, viewModel: MainViewModel) {
         val mediaList = viewModel.mediaStateChannel.value.data
         if (mediaList.isNotNullOrEmpty()) {
             itemsIndexed(mediaList!!) { index, item ->
-                val countText = "${viewModel.mediaStateChannel.value.data?.get(0)?.mediaCount} episodes"
-                ChannelHeader(title = item.title ?: "", subTitle = countText)
+                val typeName: String = if (item.isSeries) "series" else "episodes"
+                val countText = "${item.mediaCount} $typeName"
+                ChannelHeader(title = item.title ?: "", subTitle = if (item.mediaCount > 0) countText else null)
                 ChannelRow(item.list)
-                HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+                if (index < mediaList.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(all = 16.dp),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        thickness = 1.dp
+                    )
+                }
             }
         }
     }
@@ -103,7 +112,7 @@ fun Channel(paddingValues: PaddingValues, viewModel: MainViewModel) {
 
 @Composable
 @Preview
-fun ChannelHeader(title: String, subTitle: String) {
+fun ChannelHeader(title: String, subTitle: String?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -136,7 +145,7 @@ fun ChannelHeader(title: String, subTitle: String) {
             }
             if (subTitle.isNotNullOrEmpty()) {
                 Spacer(modifier = Modifier.height(height = 8.dp))
-                Text(text = subTitle, style = MaterialTheme.typography.ThumbnailSubtitleSecondary)
+                Text(text = subTitle ?: "", style = MaterialTheme.typography.ThumbnailSubtitleSecondary)
             }
         }
     }
@@ -150,6 +159,7 @@ fun ChannelRow(thumbnailItems: List<ThumbnailItem>?) {
     LazyRow(modifier = Modifier.padding(all = 16.dp)) {
         itemsIndexed(thumbnailItems!!) { index, item ->
             Thumbnail(
+                isPortrait = item.isPortrait ?: true,
                 imageUrl = item.thumbnailImage,
                 title = item.title,
                 subTitle = item.channelTitle
@@ -203,6 +213,6 @@ fun Prev_Thumbnail() {
 @Preview
 fun Prev_NewEpisode() {
     OpenMindValleyTheme {
-        NewEpisode(modifier = Modifier, mediaList = null)
+        NewEpisode(mediaList = null)
     }
 }

@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
 import com.openmindvalley.android.app.presentation.composables.RootView
 import com.openmindvalley.android.app.presentation.theme.OpenMindValleyTheme
 import com.openmindvalley.android.app.presentation.viewmodels.MainViewModel
@@ -34,7 +33,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OpenMindValleyTheme {
-                Scaffold(topBar = { TopAppBar(title = {  })}) { innerPadding ->
+                Scaffold { innerPadding ->
                     RootView(innerPadding)
                 }
             }

@@ -4,8 +4,8 @@ import android.content.Context
 import com.openmindvalley.android.app.data.remote.dto.toMediaCategories
 import com.openmindvalley.android.app.data.remote.dto.toMediaCourse
 import com.openmindvalley.android.app.data.remote.dto.toMediaNewEpisode
-import com.openmindvalley.android.app.repository.MediaRepository
 import com.openmindvalley.android.app.domain.model.Media
+import com.openmindvalley.android.app.repository.MediaRepository
 import com.openmindvalley.android.app.utils.Resource
 import com.openmindvalley.android.app.utils.isNotNullOrEmpty
 import kotlinx.coroutines.flow.Flow
@@ -24,11 +24,6 @@ open class MediaDataByUseCase @Inject constructor(private val context: Context, 
             } else if (data.data?.channels.isNotNullOrEmpty()){
                 data.data?.channels?.forEach {
                     emit(Resource.Success(data.data.channels.toMediaCourse()))
-                    /*if (it?.series.isNullOrEmpty()) {
-                        emit(Resource.Success(data.data.channels.toMediaCourse()))
-                    } else {
-                        emit(Resource.Success(it?.series.toMediaSeries()))
-                    }*/
                 }
             } else if(data.data?.categories.isNotNullOrEmpty()) {
                 emit(Resource.Success(data.data?.categories.toMediaCategories()))

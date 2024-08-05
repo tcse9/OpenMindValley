@@ -6,20 +6,25 @@ sealed class Media {
     open val mediaCount: Int = 0
     open val list: List<ThumbnailItem>? = null
     open val categoryNames: List<String>? = null
+    open val isSeries: Boolean = false
 
     data class NewEpisode(override val title: String?, override val list: List<ThumbnailItem>?) : Media()
+
     data class Course(
         override val title: String?,
         override val iconImage: String?,
         override val mediaCount: Int = 0,
-        override val list: List<ThumbnailItem>?
+        override val list: List<ThumbnailItem>?,
+        override val isSeries: Boolean
+
     ) : Media()
 
     data class Series(
         override val title: String?,
         override val iconImage: String?,
         override val mediaCount: Int = 0,
-        override val list: List<ThumbnailItem>?
+        override val list: List<ThumbnailItem>?,
+        override val isSeries: Boolean
     ) : Media()
 
     data class Category(override val categoryNames: List<String>?) : Media()
