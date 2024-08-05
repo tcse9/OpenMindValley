@@ -131,16 +131,26 @@ fun List<MediaItem?>?.toMediaNewEpisode(): List<Media.NewEpisode> {
 
 fun List<ChannelsItem?>?.toMediaCourse(): List<Media.Course> {
 	val mediaCourses = arrayListOf<Media.Course>()
-	this?.forEach {
+	this?.forEach { item ->
 		val thumbnailItems = arrayListOf<ThumbnailItem>()
-		thumbnailItems.add(
-			ThumbnailItem(
-				title = it?.title,
-				channelTitle = null,
-				thumbnailImage = it?.coverAsset?.url
+		item?.latestMedia?.forEach {
+			thumbnailItems.add(
+				ThumbnailItem(
+					title = it?.title,
+					channelTitle = null,
+					thumbnailImage = it?.coverAsset?.url
+				)
+			)
+		}
+
+		mediaCourses.add(
+			Media.Course(
+				title = item?.title,
+				iconImage = null,
+				mediaCount = this.size,
+				list = thumbnailItems
 			)
 		)
-		mediaCourses.add(Media.Course(title = it?.title, iconImage = null, mediaCount = this.size, list = thumbnailItems))
 	}
 	return mediaCourses
 }
