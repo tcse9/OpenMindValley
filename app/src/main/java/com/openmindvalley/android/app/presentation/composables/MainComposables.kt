@@ -21,16 +21,21 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -56,6 +61,7 @@ import com.openmindvalley.android.app.presentation.theme.ThumbnailSubtitleSecond
 import com.openmindvalley.android.app.presentation.theme.ThumbnailTitle
 import com.openmindvalley.android.app.presentation.viewmodels.MainViewModel
 import com.openmindvalley.android.app.utils.isNotNullOrEmpty
+import kotlinx.coroutines.delay
 
 @Composable
 fun RootView(paddingValues: PaddingValues, viewModel: MainViewModel = hiltViewModel()) {
@@ -85,39 +91,59 @@ fun NewEpisode(mediaList: List<Media>?) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Channel(modifier: Modifier, viewModel: MainViewModel) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
-        val newEpisode = viewModel.mediaStateNewEpisode.value.data
-        item {
-            NewEpisode(mediaList = newEpisode)
+    val state = rememberPullToRefreshState()
+    if (state.isRefreshing) {
+        LaunchedEffect(true) {
+            // fetch something
+            delay(1500)
+            viewModel.loadData()
+            state.endRefresh()
         }
-        item {
-            HorizontalDivider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
-        }
+    }
+    Box(Modifier.nestedScroll(state.nestedScrollConnection)) {
+        LazyColumn(modifier = modifier.fillMaxSize()) {
 
-        val mediaList = viewModel.mediaStateChannel.value.data
-        if (mediaList.isNotNullOrEmpty()) {
-            itemsIndexed(mediaList!!) { index, item ->
-                val typeName: String = if (item.isSeries) "series" else "episodes"
-                val countText = "${item.mediaCount} $typeName"
-                ChannelHeader(title = item.title ?: "", subTitle = if (item.mediaCount > 0) countText else null)
-                ChannelRow(item.list)
-                if (index < mediaList.size - 1) {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(all = 16.dp),
-                        color = MaterialTheme.colorScheme.tertiary,
-                        thickness = 1.dp
-                    )
+            val newEpisode = viewModel.mediaStateNewEpisode.value.data
+            item {
+                NewEpisode(mediaList = newEpisode)
+            }
+            item {
+                HorizontalDivider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+            }
+
+            val mediaList = viewModel.mediaStateChannel.value.data
+            if (!state.isRefreshing) {
+                if (mediaList.isNotNullOrEmpty()) {
+                    itemsIndexed(mediaList!!) { index, item ->
+                        val typeName: String = if (item.isSeries) "series" else "episodes"
+                        val countText = "${item.mediaCount} $typeName"
+                        ChannelHeader(title = item.title ?: "", subTitle = if (item.mediaCount > 0) countText else null)
+                        ChannelRow(item.list)
+                        if (index < mediaList.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(all = 16.dp),
+                                color = MaterialTheme.colorScheme.tertiary,
+                                thickness = 1.dp
+                            )
+                        }
+                    }
                 }
             }
+
+            item {
+                HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+            }
+            item {
+                CategoryFlowRow(categories = viewModel.mediaStateCategories.value.data)
+            }
         }
-        item {
-            HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
-        }
-        item {
-            CategoryFlowRow(categories = viewModel.mediaStateCategories.value.data)
-        }
+        PullToRefreshContainer(
+            modifier = Modifier.align(Alignment.TopCenter),
+            state = state,
+        )
     }
 }
 

@@ -80,4 +80,10 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
             }
         }.launchIn(viewModelScope)
     }
+
+    fun loadData() {
+        getMediaNewEpisode("z5AExTtw")
+        getMediaChannel("Xt12uVhM")
+        getMediaCategories("A0CgArX3")
+    }
 }

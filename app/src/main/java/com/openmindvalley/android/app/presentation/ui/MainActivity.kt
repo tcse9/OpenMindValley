@@ -25,10 +25,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        viewModel.getMediaNewEpisode("z5AExTtw")
-        viewModel.getMediaChannel("Xt12uVhM")
-        viewModel.getMediaCategories("A0CgArX3")
-
+        viewModel.loadData()
 
         setContent {
             OpenMindValleyTheme {
