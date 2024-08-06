@@ -1,9 +1,12 @@
 package com.openmindvalley.android.app.presentation.composables
 
-import android.widget.Space
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +49,8 @@ import com.openmindvalley.android.app.presentation.theme.OpenMindValleyTheme
 import com.openmindvalley.android.app.presentation.theme.RootTitle
 import com.openmindvalley.android.app.presentation.theme.SecondaryRootTitle
 import com.openmindvalley.android.app.presentation.theme.SecondaryRootTitleWhite
+import com.openmindvalley.android.app.presentation.theme.TextPrimary
+import com.openmindvalley.android.app.presentation.theme.TextSecondary
 import com.openmindvalley.android.app.presentation.theme.ThumbnailSubtitle
 import com.openmindvalley.android.app.presentation.theme.ThumbnailSubtitleSecondary
 import com.openmindvalley.android.app.presentation.theme.ThumbnailTitle
@@ -107,11 +112,16 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
                 }
             }
         }
+        item {
+            HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+        }
+        item {
+            CategoryFlowRow(categories = viewModel.mediaStateCategories.value.data)
+        }
     }
 }
 
 @Composable
-@Preview
 fun ChannelHeader(title: String, subTitle: String?) {
     Row(
         modifier = Modifier
@@ -198,6 +208,48 @@ fun Thumbnail(isPortrait: Boolean = true, imageUrl: String? = null, title: Strin
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = subTitle ?: "",  maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.ThumbnailSubtitle)
         }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CategoryFlowRow(categories: List<Media>?) {
+    Column {
+        Text(modifier = Modifier.padding(all = 16.dp), text = "Browse by categories",  style = MaterialTheme.typography.SecondaryRootTitle)
+        FlowRow(modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 16.dp)) {
+            categories?.get(0)?.categoryNames?.forEach {
+                CateGoryChip(name = it)
+            }
+        }
+    }
+}
+
+@Composable
+fun CateGoryChip(name: String) {
+    Row(
+        modifier = Modifier
+            .clickable(enabled = true, onClick = {})
+            .padding(8.dp)
+            .background(
+                color = TextSecondary.copy(alpha = 0.20f),
+                shape = RoundedCornerShape(36.dp)
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = name,
+            style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = TextPrimary)
+        )
+    }
+}
+
+@Composable
+@Preview
+fun Prev_CateGoryChip() {
+    OpenMindValleyTheme {
+        CateGoryChip(name = "Comedy")
     }
 }
 
