@@ -151,7 +151,7 @@ fun List<ChannelsItem?>?.toMediaCourse(): List<Media> {
 				iconImage = null,
 				mediaCount = item?.mediaCount ?: 0,
 				list = thumbnailItems,
-				isSeries = item?.series.isNotNullOrEmpty()
+				isMediaTypeSeries = item?.series.isNotNullOrEmpty()
 			)
 		)
 	}

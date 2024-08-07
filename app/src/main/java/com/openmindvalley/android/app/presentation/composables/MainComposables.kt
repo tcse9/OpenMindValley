@@ -1,5 +1,6 @@
 package com.openmindvalley.android.app.presentation.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -39,6 +41,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,14 +80,23 @@ fun NewEpisode(mediaList: List<Media>?) {
         Text(text = "Channels",  style = MaterialTheme.typography.RootTitle)
         Spacer(modifier = Modifier.height(28.dp))
         Text(text = "New Episodes",  style = MaterialTheme.typography.SecondaryRootTitle)
-        val thumbnailItem = mediaList?.get(0)?.list
-        if (thumbnailItem.isNotNullOrEmpty()) {
+
+        val originalList = mediaList?.get(0)?.list
+        val thumbnailItems = mediaList?.get(0)?.list?.take(6)
+
+        if (thumbnailItems.isNotNullOrEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             LazyRow {
-                itemsIndexed(thumbnailItem!!) { index, item ->
+                itemsIndexed(thumbnailItems!!) { index, item ->
                     Thumbnail(imageUrl = item.thumbnailImage, title = item.title, subTitle = item.channelTitle)
-                    if (index < thumbnailItem.size - 1) {
+                    if (index < thumbnailItems.size - 1) {
                         Spacer(modifier = Modifier.width(16.dp))
+                    }
+                }
+                if (originalList.isNotNullOrEmpty() && originalList?.size!! > 6) {
+                    item {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        LoadMoreThumbnail(isPortrait = originalList[0].isPortrait ?: true)
                     }
                 }
             }
@@ -118,7 +131,7 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
             if (!state.isRefreshing) {
                 if (mediaList.isNotNullOrEmpty()) {
                     itemsIndexed(mediaList!!) { index, item ->
-                        val typeName: String = if (item.isSeries) "series" else "episodes"
+                        val typeName: String = if (item.isMediaTypeSeries) "series" else "episodes"
                         val countText = "${item.mediaCount} $typeName"
                         ChannelHeader(title = item.title ?: "", subTitle = if (item.mediaCount > 0) countText else null)
                         ChannelRow(item.list)
@@ -189,19 +202,26 @@ fun ChannelHeader(title: String, subTitle: String?) {
 
 @Composable
 fun ChannelRow(thumbnailItems: List<ThumbnailItem>?) {
-    if (thumbnailItems.isNullOrEmpty()) {
+    val customRangeList = thumbnailItems?.take(6)
+    if (customRangeList.isNullOrEmpty()) {
         return
     }
     LazyRow(modifier = Modifier.padding(all = 16.dp)) {
-        itemsIndexed(thumbnailItems!!) { index, item ->
+        itemsIndexed(customRangeList) { index, item ->
             Thumbnail(
                 isPortrait = item.isPortrait ?: true,
                 imageUrl = item.thumbnailImage,
                 title = item.title,
                 subTitle = item.channelTitle
             )
-            if (index < thumbnailItems.size - 1) {
+            if (index < customRangeList.size - 1) {
                 Spacer(modifier = Modifier.width(16.dp))
+            }
+        }
+        if (thumbnailItems.isNotNullOrEmpty() && thumbnailItems.size > 6) {
+            item {
+                Spacer(modifier = Modifier.width(16.dp))
+                LoadMoreThumbnail(isPortrait = thumbnailItems[0].isPortrait ?: true)
             }
         }
     }
@@ -235,6 +255,41 @@ fun Thumbnail(isPortrait: Boolean = true, imageUrl: String? = null, title: Strin
             Text(text = subTitle ?: "",  maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.ThumbnailSubtitle)
         }
     }
+}
+
+@Composable
+fun LoadMoreThumbnail(isPortrait: Boolean = true) {
+    val context = LocalContext.current
+
+    var thumbnailWidth = 152.dp
+    var thumbnailHeight = 228.dp
+    if (!isPortrait) {
+        thumbnailWidth = 320.dp
+        thumbnailHeight = 172.dp
+    }
+    Box(
+        modifier = Modifier
+            .size(width = thumbnailWidth, height = thumbnailHeight)
+            .clip(shape = RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colorScheme.secondary)
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        OutlinedButton(onClick = { Toast.makeText(context,
+            context.getString(R.string.under_construction), Toast.LENGTH_SHORT).show() }) {
+            Text(
+                text = stringResource(R.string.load_more),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White)
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun Prev_LoadMoreThumbnail() {
+    LoadMoreThumbnail(isPortrait = true)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
