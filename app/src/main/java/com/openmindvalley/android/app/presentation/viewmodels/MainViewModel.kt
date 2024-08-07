@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openmindvalley.android.app.domain.use_case.MediaDataByUseCase
 import com.openmindvalley.android.app.presentation.state.MediaState
+import com.openmindvalley.android.app.utils.NetworkUtils
 import com.openmindvalley.android.app.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDataByUseCase) : ViewModel() {
+class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDataByUseCase, val networkUtils: NetworkUtils) : ViewModel() {
     private val _mediaStateNewEpisode = mutableStateOf(MediaState(isLoading = false))
     val mediaStateNewEpisode: State<MediaState> = _mediaStateNewEpisode
 
@@ -22,7 +23,6 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
     private val _mediaStateCategories = mutableStateOf(MediaState(isLoading = false))
     val mediaStateCategories: State<MediaState> = _mediaStateCategories
-
 
     fun getMediaNewEpisode(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
@@ -82,6 +82,9 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
     }
 
     fun loadData() {
+        if (!networkUtils.isInternetConnected) {
+            return
+        }
         getMediaNewEpisode("z5AExTtw")
         getMediaChannel("Xt12uVhM")
         getMediaCategories("A0CgArX3")

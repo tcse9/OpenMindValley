@@ -1,6 +1,8 @@
 package com.openmindvalley.android.app.presentation.composables
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,14 +29,22 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -48,7 +58,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.ErrorResult
 import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.openmindvalley.android.app.R
 import com.openmindvalley.android.app.domain.model.Media
 import com.openmindvalley.android.app.domain.model.ThumbnailItem
@@ -65,7 +77,6 @@ import com.openmindvalley.android.app.presentation.theme.ThumbnailSubtitleSecond
 import com.openmindvalley.android.app.presentation.theme.ThumbnailTitle
 import com.openmindvalley.android.app.presentation.viewmodels.MainViewModel
 import com.openmindvalley.android.app.utils.isNotNullOrEmpty
-import kotlinx.coroutines.delay
 
 @Composable
 fun RootView(paddingValues: PaddingValues, viewModel: MainViewModel = hiltViewModel()) {
@@ -77,14 +88,14 @@ fun NewEpisode(mediaList: List<Media>?) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(all = 16.dp)) {
-        Text(text = "Channels",  style = MaterialTheme.typography.RootTitle)
-        Spacer(modifier = Modifier.height(28.dp))
-        Text(text = "New Episodes",  style = MaterialTheme.typography.SecondaryRootTitle)
 
         val originalList = mediaList?.get(0)?.list
         val thumbnailItems = mediaList?.get(0)?.list?.take(6)
 
         if (thumbnailItems.isNotNullOrEmpty()) {
+            Text(text = "Channels",  style = MaterialTheme.typography.RootTitle)
+            Spacer(modifier = Modifier.height(28.dp))
+            Text(text = "New Episodes",  style = MaterialTheme.typography.SecondaryRootTitle)
             Spacer(modifier = Modifier.height(16.dp))
             LazyRow {
                 itemsIndexed(thumbnailItems!!) { index, item ->
@@ -110,26 +121,24 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
     val state = rememberPullToRefreshState()
     if (state.isRefreshing) {
         LaunchedEffect(true) {
-            // fetch something
-            delay(1500)
             viewModel.loadData()
             state.endRefresh()
         }
     }
     Box(Modifier.nestedScroll(state.nestedScrollConnection)) {
         LazyColumn(modifier = modifier.fillMaxSize()) {
-
             val newEpisode = viewModel.mediaStateNewEpisode.value.data
-            item {
-                NewEpisode(mediaList = newEpisode)
-            }
-            item {
-                HorizontalDivider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
-            }
-
             val mediaList = viewModel.mediaStateChannel.value.data
+
             if (!state.isRefreshing) {
                 if (mediaList.isNotNullOrEmpty()) {
+                    item {
+                        NewEpisode(mediaList = newEpisode)
+                    }
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+                    }
+
                     itemsIndexed(mediaList!!) { index, item ->
                         val typeName: String = if (item.isMediaTypeSeries) "series" else "episodes"
                         val countText = "${item.mediaCount} $typeName"
@@ -143,14 +152,14 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
                             )
                         }
                     }
-                }
-            }
 
-            item {
-                HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
-            }
-            item {
-                CategoryFlowRow(categories = viewModel.mediaStateCategories.value.data)
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+                    }
+                    item {
+                        CategoryFlowRow(categories = viewModel.mediaStateCategories.value.data)
+                    }
+                }
             }
         }
         PullToRefreshContainer(
@@ -235,12 +244,31 @@ fun Thumbnail(isPortrait: Boolean = true, imageUrl: String? = null, title: Strin
         thumbnailWidth = 320.dp
         thumbnailHeight = 172.dp
     }
+
+    var isLoaded by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isLoaded) 1f else 0.75f,
+        animationSpec = tween(durationMillis = 500)
+    )
+
     Column(modifier = Modifier.width(thumbnailWidth)) {
-        val request = ImageRequest.Builder(LocalContext.current).data(imageUrl).build()
+        val request = ImageRequest.Builder(LocalContext.current).listener(object : ImageRequest.Listener{
+            override fun onSuccess(request: ImageRequest, result: SuccessResult) {
+                super.onSuccess(request, result)
+                isLoaded = true
+            }
+
+            override fun onError(request: ImageRequest, result: ErrorResult) {
+                super.onError(request, result)
+                isLoaded = false
+            }
+        }).data(imageUrl).build()
+
         AsyncImage(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(8.dp))
                 .size(thumbnailWidth, thumbnailHeight)
+                .scale(scale)
                 .background(color = MaterialTheme.colorScheme.secondary),
             contentScale = ContentScale.Crop,
             model = request,
@@ -276,7 +304,7 @@ fun LoadMoreThumbnail(isPortrait: Boolean = true) {
         contentAlignment = Alignment.Center
     ) {
         OutlinedButton(onClick = { Toast.makeText(context,
-            context.getString(R.string.under_construction), Toast.LENGTH_SHORT).show() }) {
+            context.getString(R.string.generic_msg_under_construction), Toast.LENGTH_SHORT).show() }) {
             Text(
                 text = stringResource(R.string.load_more),
                 textAlign = TextAlign.Center,
@@ -284,6 +312,23 @@ fun LoadMoreThumbnail(isPortrait: Boolean = true) {
             )
         }
     }
+}
+
+@Composable
+fun ShortSnackbar(
+    message: String,
+    actionLabel: String?,
+    duration: SnackbarDuration = SnackbarDuration.Short,
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(snackbarHostState) {
+        snackbarHostState.showSnackbar(message, actionLabel, duration = duration)
+    }
+
+    SnackbarHost(
+        hostState = snackbarHostState,
+    )
 }
 
 @Composable
