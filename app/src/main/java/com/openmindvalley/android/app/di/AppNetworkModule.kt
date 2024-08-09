@@ -38,17 +38,27 @@ object AppNetworkModule {
     @Singleton
     fun provideApi(@ApplicationContext context: Context, loggerInterceptor: HttpLoggingInterceptor, networkUtils: NetworkUtils): ApiService {
         val cacheSize = (5 * 1024 * 1024).toLong()
-        val myCache = Cache(context.cacheDir, cacheSize)
+        val cacheDirectory = Cache(context.cacheDir, cacheSize)
+        val cacheValidityTime:Long = 7 * 60 * 60 * 24
 
         loggerInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client = OkHttpClient.Builder()
-            .cache(myCache)
+            .cache(cacheDirectory)
             .addInterceptor { chain ->
                 var request = chain.request()
-                request = if (networkUtils.isInternetConnected)
+                request = if (networkUtils.isInternetConnected) {
+                    // if the internet is connected then get the data that was cached for 5 seconds ago
+                    // else discard it and get the data from the server
                     request.newBuilder().header("Cache-Control", "public, max-age=" + 5).build()
-                else
-                    request.newBuilder().header("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7).build()
+                }
+                else {
+                    // if there is no internet connection then get the data that was cached for 7 days ago
+                    // else discard it and get the data from the server
+                    request.newBuilder().header(
+                        "Cache-Control",
+                        "public, only-if-cached, max-stale=$cacheValidityTime"
+                    ).build()
+                }
                 chain.proceed(request)
             }
             .addInterceptor(loggerInterceptor)

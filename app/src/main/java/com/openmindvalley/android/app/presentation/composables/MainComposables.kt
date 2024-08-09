@@ -24,6 +24,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -129,6 +131,19 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
         LazyColumn(modifier = modifier.fillMaxSize()) {
             val newEpisode = viewModel.mediaStateNewEpisode.value.data
             val mediaList = viewModel.mediaStateChannel.value.data
+
+            if (viewModel.mediaStateNewEpisode.value.error != null
+                || viewModel.mediaStateChannel.value.error != null
+                || viewModel.mediaStateCategories.value.error != null
+            ) {
+                item {
+                    ShortSnackbar(
+                        message = stringResource(id = R.string.generic_something_went_wrong),
+                        actionLabel = null
+                    )
+                }
+            }
+
 
             if (!state.isRefreshing) {
                 if (mediaList.isNotNullOrEmpty()) {
@@ -329,6 +344,30 @@ fun ShortSnackbar(
     SnackbarHost(
         hostState = snackbarHostState,
     )
+}
+
+@Composable
+fun ErrorView(errorTitle: String? = null, errorMessage: String? = null) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Row {
+            Icon(imageVector = Icons.Default.Warning, contentDescription = null, tint = Color.White)
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(text = errorTitle ?: "", style = MaterialTheme.typography.ThumbnailTitle, textAlign = TextAlign.Center)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = errorMessage ?: "", style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White), textAlign = TextAlign.Center)
+
+    }
+}
+
+@Composable
+@Preview
+fun Prev_ErrorView() {
+    OpenMindValleyTheme {
+        ErrorView(errorTitle = "Error", errorMessage = stringResource(R.string.generic_something_went_wrong))
+    }
 }
 
 @Composable

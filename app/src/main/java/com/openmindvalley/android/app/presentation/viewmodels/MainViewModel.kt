@@ -33,9 +33,9 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
                 is Resource.Error -> _mediaStateNewEpisode.value = MediaState(
                     isLoading = false,
-                    data = result.data,
+                    data = null,
+                    error = result.errorDto,
                     errorMessage = result.message ?: "Error loading data",
-                    error = result.errorDto
                 )
 
                 is Resource.Success -> _mediaStateNewEpisode.value =
@@ -53,8 +53,9 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
                 is Resource.Error -> _mediaStateChannel.value = MediaState(
                     isLoading = false,
-                    data = result.data,
-                    errorMessage = result.message ?: "Error loading data"
+                    data = null,
+                    error = result.errorDto,
+                    errorMessage = result.message ?: "Error loading data",
                 )
 
                 is Resource.Success -> _mediaStateChannel.value =
@@ -72,8 +73,9 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
                 is Resource.Error -> _mediaStateCategories.value = MediaState(
                     isLoading = false,
-                    data = result.data,
-                    errorMessage = result.message ?: "Error loading data"
+                    data = null,
+                    error = result.errorDto,
+                    errorMessage = result.message ?: "Error loading data",
                 )
 
                 is Resource.Success -> _mediaStateCategories.value =

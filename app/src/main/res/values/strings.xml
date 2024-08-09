@@ -4,4 +4,5 @@
     <string name="generic_msg_under_construction">Under construction!</string>
     <string name="generic_msg_no_internet_ui">No internet, date is either shown from cache or no data available!</string>
     <string name="generic_msg_no_internet">No internet, please try again later!</string>
+    <string name="generic_something_went_wrong">Something went wrong, please try again later!</string>
 </resources>
