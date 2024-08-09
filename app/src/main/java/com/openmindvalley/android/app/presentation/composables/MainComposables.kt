@@ -95,9 +95,9 @@ fun NewEpisode(mediaList: List<Media>?) {
         val thumbnailItems = mediaList?.get(0)?.list?.take(6)
 
         if (thumbnailItems.isNotNullOrEmpty()) {
-            Text(text = "Channels",  style = MaterialTheme.typography.RootTitle)
+            Text(text = stringResource(R.string.channels),  style = MaterialTheme.typography.RootTitle)
             Spacer(modifier = Modifier.height(28.dp))
-            Text(text = "New Episodes",  style = MaterialTheme.typography.SecondaryRootTitle)
+            Text(text = stringResource(R.string.new_episodes),  style = MaterialTheme.typography.SecondaryRootTitle)
             Spacer(modifier = Modifier.height(16.dp))
             LazyRow {
                 itemsIndexed(thumbnailItems!!) { index, item ->
@@ -137,10 +137,9 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
                 || viewModel.mediaStateCategories.value.error != null
             ) {
                 item {
-                    ShortSnackbar(
-                        message = stringResource(id = R.string.generic_something_went_wrong),
-                        actionLabel = null
-                    )
+                    ErrorView(errorMessage = stringResource(R.string.generic_something_went_wrong)) {
+                        viewModel.loadData()
+                    }
                 }
             }
 
@@ -155,7 +154,9 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
                     }
 
                     itemsIndexed(mediaList!!) { index, item ->
-                        val typeName: String = if (item.isMediaTypeSeries) "series" else "episodes"
+                        val typeName: String = if (item.isMediaTypeSeries) stringResource(R.string.series) else stringResource(
+                            R.string.episodes
+                        )
                         val countText = "${item.mediaCount} $typeName"
                         ChannelHeader(title = item.title ?: "", subTitle = if (item.mediaCount > 0) countText else null)
                         ChannelRow(item.list)
@@ -347,7 +348,7 @@ fun ShortSnackbar(
 }
 
 @Composable
-fun ErrorView(errorTitle: String? = null, errorMessage: String? = null) {
+fun ErrorView(errorTitle: String? = stringResource(id = R.string.error), errorMessage: String? = null, onRetryClicked: () -> Unit = {}) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
@@ -358,6 +359,10 @@ fun ErrorView(errorTitle: String? = null, errorMessage: String? = null) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = errorMessage ?: "", style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White), textAlign = TextAlign.Center)
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedButton(onClick = { onRetryClicked() }) {
+            Text(text = stringResource(R.string.retry), style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White), textAlign = TextAlign.Center)
+        }
 
     }
 }
@@ -366,7 +371,7 @@ fun ErrorView(errorTitle: String? = null, errorMessage: String? = null) {
 @Preview
 fun Prev_ErrorView() {
     OpenMindValleyTheme {
-        ErrorView(errorTitle = "Error", errorMessage = stringResource(R.string.generic_something_went_wrong))
+        ErrorView(errorMessage = stringResource(R.string.generic_something_went_wrong))
     }
 }
 
@@ -380,7 +385,7 @@ fun Prev_LoadMoreThumbnail() {
 @Composable
 fun CategoryFlowRow(categories: List<Media>?) {
     Column {
-        Text(modifier = Modifier.padding(all = 16.dp), text = "Browse by categories",  style = MaterialTheme.typography.SecondaryRootTitle)
+        Text(modifier = Modifier.padding(all = 16.dp), text = stringResource(R.string.browse_by_categories),  style = MaterialTheme.typography.SecondaryRootTitle)
         FlowRow(modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 16.dp)) {
             categories?.get(0)?.categoryNames?.forEach {
                 CateGoryChip(name = it)

@@ -8,7 +8,7 @@ sealed class Media {
     open val categoryNames: List<String>? = null
     open val isMediaTypeSeries: Boolean = false
 
-    data class NewEpisode(override val title: String?, override val list: List<ThumbnailItem>?) : Media()
+    data class NewEpisode(override val list: List<ThumbnailItem>?) : Media()
 
     data class Course(
         override val title: String?,

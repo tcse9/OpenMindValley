@@ -127,7 +127,7 @@ fun List<MediaItem?>?.toMediaNewEpisode(): List<Media.NewEpisode> {
 			)
 		)
 	}
-	return listOf(Media.NewEpisode(title = "New Spisodes", list = thumbnailItems))
+	return listOf(Media.NewEpisode(list = thumbnailItems))
 }
 
 fun List<ChannelsItem?>?.toMediaCourse(): List<Media> {
