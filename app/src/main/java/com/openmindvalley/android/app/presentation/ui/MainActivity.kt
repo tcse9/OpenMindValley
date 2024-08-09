@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             OpenMindValleyTheme {
                 Scaffold(bottomBar = {
                     if (!viewModel.networkUtils.isInternetConnected) {
-                        ShortSnackbar(message = stringResource(R.string.generic_msg_no_internet), null)
+                        ShortSnackbar(message = stringResource(R.string.generic_msg_no_internet_ui), null)
                     }
                 }) { innerPadding ->
                     RootView(innerPadding)

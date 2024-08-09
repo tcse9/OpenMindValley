@@ -1,6 +1,8 @@
 package com.openmindvalley.android.app.domain.use_case
 
 import android.content.Context
+import com.openmindvalley.android.app.R
+import com.openmindvalley.android.app.data.remote.dto.ErrorDto
 import com.openmindvalley.android.app.data.remote.dto.toMediaCategories
 import com.openmindvalley.android.app.data.remote.dto.toMediaCourse
 import com.openmindvalley.android.app.data.remote.dto.toMediaNewEpisode
@@ -30,9 +32,9 @@ open class MediaDataByUseCase @Inject constructor(private val context: Context, 
             }
 
         } catch(e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
+            emit(Resource.Error(errorDto = ErrorDto(code = e.code(), description = e.message())))
         } catch(e: IOException) {
-            emit(Resource.Error("Check your internet connection"))
+            emit(Resource.Error(ErrorDto(description = context.getString(R.string.generic_msg_no_internet))))
         }
     }
 }

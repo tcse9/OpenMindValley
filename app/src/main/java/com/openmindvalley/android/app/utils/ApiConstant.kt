@@ -1,4 +1,4 @@
-package com.stocky.android.app.utils
+package com.openmindvalley.android.app.utils
 
 object ApiConstant {
     const val BASE_URL = "https://pastebin.com/"
