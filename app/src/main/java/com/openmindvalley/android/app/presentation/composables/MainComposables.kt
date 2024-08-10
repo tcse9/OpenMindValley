@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,7 +54,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,10 +80,15 @@ import com.openmindvalley.android.app.presentation.theme.ThumbnailSubtitleSecond
 import com.openmindvalley.android.app.presentation.theme.ThumbnailTitle
 import com.openmindvalley.android.app.presentation.viewmodels.MainViewModel
 import com.openmindvalley.android.app.utils.isNotNullOrEmpty
+import com.openmindvalley.android.app.utils.viewutils.shimmerEffect
 
 @Composable
 fun RootView(paddingValues: PaddingValues, viewModel: MainViewModel = hiltViewModel()) {
-    Channel(modifier = Modifier.padding(paddingValues), viewModel = viewModel)
+    if (!viewModel.isAllDataLoaded) {
+        ShimmerLoader()
+    } else {
+        Channel(modifier = Modifier.padding(paddingValues), viewModel = viewModel)
+    }
 }
 
 @Composable
@@ -133,8 +139,8 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
             val mediaList = viewModel.mediaStateChannel.value.data
 
             if (viewModel.mediaStateNewEpisode.value.error != null
-                || viewModel.mediaStateChannel.value.error != null
-                || viewModel.mediaStateCategories.value.error != null
+                && viewModel.mediaStateChannel.value.error != null
+                && viewModel.mediaStateCategories.value.error != null
             ) {
                 item {
                     ErrorView(errorMessage = stringResource(R.string.generic_something_went_wrong)) {
@@ -150,7 +156,7 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
                         NewEpisode(mediaList = newEpisode)
                     }
                     item {
-                        HorizontalDivider(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
+                        HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
                     }
 
                     itemsIndexed(mediaList!!) { index, item ->
@@ -186,7 +192,7 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
 }
 
 @Composable
-fun ChannelHeader(title: String, subTitle: String?) {
+fun ChannelHeader(title: String, subTitle: String?, iconUrl: String? = null) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -205,11 +211,16 @@ fun ChannelHeader(title: String, subTitle: String?) {
                     )
                 ), contentAlignment = Alignment.Center
         ) {
-            Icon(
-                modifier = Modifier.size(size = 32.dp),
-                painter = painterResource(id = R.drawable.channel_header1),
-                tint = Color.White,
-                contentDescription = null
+
+            val request = ImageRequest.Builder(LocalContext.current)
+                .data(iconUrl)
+                .placeholder(R.drawable.default_header_icon)
+                .error(R.drawable.default_header_icon)
+                .build()
+
+            AsyncImage(
+                model = request,
+                contentDescription = null,
             )
         }
         Spacer(modifier = Modifier.width(width = 16.dp))
@@ -254,8 +265,12 @@ fun ChannelRow(thumbnailItems: List<ThumbnailItem>?) {
 
 @Composable
 fun Thumbnail(isPortrait: Boolean = true, imageUrl: String? = null, title: String? = null, subTitle: String? = null) {
-    var thumbnailWidth = 152.dp
-    var thumbnailHeight = 228.dp
+    var thumbnailWidth by remember {
+        mutableStateOf(152.dp)
+    }
+    var thumbnailHeight by remember {
+        mutableStateOf(228.dp)
+    }
     if (!isPortrait) {
         thumbnailWidth = 320.dp
         thumbnailHeight = 172.dp
@@ -437,4 +452,59 @@ fun Prev_NewEpisode() {
     OpenMindValleyTheme {
         NewEpisode(mediaList = null)
     }
+}
+
+@Composable
+@Preview
+fun ShimmerLoader() {
+    Column {
+        repeat(10) {
+            Row(modifier = Modifier.horizontalScroll(state = rememberScrollState())) {
+                repeat(5) {
+                    LoaderThumbnail()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@Preview
+fun LoaderThumbnail() {
+    val thumbnailWidth by remember {
+        mutableStateOf(152.dp)
+    }
+    val thumbnailHeight by remember {
+        mutableStateOf(228.dp)
+    }
+    val titleWidth by remember {
+        mutableStateOf(100.dp)
+    }
+
+    val titleHeight by remember {
+        mutableStateOf(24.dp)
+    }
+
+    Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 8.dp, bottom = 16.dp)) {
+        Box(modifier = Modifier
+            .width(titleWidth)
+            .height(titleHeight)
+            .shimmerEffect())
+        Spacer(modifier = Modifier.height(16.dp))
+        Box(modifier = Modifier
+            .size(width = thumbnailWidth, height = thumbnailHeight)
+            .shimmerEffect())
+        Spacer(modifier = Modifier.height(16.dp))
+        Box(modifier = Modifier
+            .width(titleWidth)
+            .height(titleHeight)
+            .shimmerEffect())
+        Spacer(modifier = Modifier.height(8.dp))
+        Box(modifier = Modifier
+            .width(titleWidth)
+            .height(titleHeight)
+            .shimmerEffect())
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
 }

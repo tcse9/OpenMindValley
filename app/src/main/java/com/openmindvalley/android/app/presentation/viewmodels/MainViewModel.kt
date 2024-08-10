@@ -8,6 +8,7 @@ import com.openmindvalley.android.app.domain.use_case.MediaDataByUseCase
 import com.openmindvalley.android.app.presentation.state.MediaState
 import com.openmindvalley.android.app.utils.NetworkUtils
 import com.openmindvalley.android.app.utils.Resource
+import com.openmindvalley.android.app.utils.isNotNullOrEmpty
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -23,6 +24,13 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
     private val _mediaStateCategories = mutableStateOf(MediaState(isLoading = false))
     val mediaStateCategories: State<MediaState> = _mediaStateCategories
+
+    val isAllDataLoaded: Boolean
+        get() {
+            return (_mediaStateNewEpisode.value.data.isNotNullOrEmpty()
+                    && _mediaStateChannel.value.data.isNotNullOrEmpty()
+                    && _mediaStateCategories.value.data.isNotNullOrEmpty())
+        }
 
     private fun getMediaNewEpisode(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
