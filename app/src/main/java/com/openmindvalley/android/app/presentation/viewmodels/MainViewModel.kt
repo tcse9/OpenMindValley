@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openmindvalley.android.app.domain.use_case.MediaDataByUseCase
 import com.openmindvalley.android.app.presentation.state.MediaState
+import com.openmindvalley.android.app.utils.NetworkUtils
 import com.openmindvalley.android.app.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDataByUseCase) : ViewModel() {
+class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDataByUseCase, val networkUtils: NetworkUtils) : ViewModel() {
     private val _mediaStateNewEpisode = mutableStateOf(MediaState(isLoading = false))
     val mediaStateNewEpisode: State<MediaState> = _mediaStateNewEpisode
 
@@ -23,8 +24,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
     private val _mediaStateCategories = mutableStateOf(MediaState(isLoading = false))
     val mediaStateCategories: State<MediaState> = _mediaStateCategories
 
-
-    fun getMediaNewEpisode(mediaType: String) {
+    private fun getMediaNewEpisode(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -33,8 +33,9 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
                 is Resource.Error -> _mediaStateNewEpisode.value = MediaState(
                     isLoading = false,
-                    data = result.data,
-                    errorMessage = result.message ?: "Error loading data"
+                    data = null,
+                    error = result.errorDto,
+                    errorMessage = result.message ?: "",
                 )
 
                 is Resource.Success -> _mediaStateNewEpisode.value =
@@ -43,7 +44,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
-    fun getMediaChannel(mediaType: String) {
+    private fun getMediaChannel(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -52,8 +53,9 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
                 is Resource.Error -> _mediaStateChannel.value = MediaState(
                     isLoading = false,
-                    data = result.data,
-                    errorMessage = result.message ?: "Error loading data"
+                    data = null,
+                    error = result.errorDto,
+                    errorMessage = result.message ?: "",
                 )
 
                 is Resource.Success -> _mediaStateChannel.value =
@@ -62,7 +64,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
-    fun getMediaCategories(mediaType: String) {
+    private fun getMediaCategories(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -71,13 +73,20 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
 
                 is Resource.Error -> _mediaStateCategories.value = MediaState(
                     isLoading = false,
-                    data = result.data,
-                    errorMessage = result.message ?: "Error loading data"
+                    data = null,
+                    error = result.errorDto,
+                    errorMessage = result.message ?: "",
                 )
 
                 is Resource.Success -> _mediaStateCategories.value =
                     MediaState(data = result.data, isLoading = false)
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun loadData() {
+        getMediaNewEpisode("z5AExTtw")
+        getMediaChannel("Xt12uVhM")
+        getMediaCategories("A0CgArX3")
     }
 }

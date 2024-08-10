@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">OpenMindValley</string>
+    <string name="load_more">Click to load more</string>
+    <string name="generic_msg_under_construction">Under construction!</string>
+    <string name="generic_msg_no_internet_ui">No internet, date is either shown from cache or no data available!</string>
+    <string name="generic_msg_no_internet">No internet, please try again later!</string>
+    <string name="generic_something_went_wrong">Something went wrong, please try again later!</string>
+    <string name="channels">Channels</string>
+    <string name="new_episodes">New Episodes</string>
+    <string name="series">series</string>
+    <string name="episodes">episodes</string>
+    <string name="browse_by_categories">Browse by categories</string>
+    <string name="error_loading_data">Error loading data</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
 </resources>

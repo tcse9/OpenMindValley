@@ -1,11 +1,6 @@
-package com.stocky.android.app.data.remote.dto
+package com.openmindvalley.android.app.data.remote.dto
 
-import com.google.gson.annotations.SerializedName
-
-data class Error(
-	@field:SerializedName("code")
-	var code: String? = null,
-
-	@field:SerializedName("description")
+data class ErrorDto(
+	var code: Int? = null,
 	var description: String? = null
 )
