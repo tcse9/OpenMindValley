@@ -23,6 +23,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -89,22 +90,24 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
             state.endRefresh()
         }
     }
+
+    val newEpisode = viewModel.mediaStateNewEpisode.collectAsState().value.data
+    val mediaList = viewModel.mediaStateChannel.collectAsState().value.data
+    val categoryList = viewModel.mediaStateCategories.collectAsState().value.data
+
+    val errorObjNewEpisode = viewModel.mediaStateNewEpisode.collectAsState().value.error
+    val errorObjMediaList = viewModel.mediaStateChannel.collectAsState().value.error
+    val errorObjCategoryList = viewModel.mediaStateCategories.collectAsState().value.error
+
     Box(Modifier.nestedScroll(state.nestedScrollConnection)) {
         LazyColumn(modifier = modifier.fillMaxSize()) {
-            val newEpisode = viewModel.mediaStateNewEpisode.value.data
-            val mediaList = viewModel.mediaStateChannel.value.data
-
-            if (viewModel.mediaStateNewEpisode.value.error != null
-                && viewModel.mediaStateChannel.value.error != null
-                && viewModel.mediaStateCategories.value.error != null
-            ) {
+            if (errorObjNewEpisode != null && errorObjMediaList != null && errorObjCategoryList != null) {
                 item {
                     ErrorView(errorMessage = stringResource(R.string.generic_something_went_wrong)) {
                         viewModel.loadData()
                     }
                 }
             }
-
 
             if (!state.isRefreshing) {
                 if (mediaList.isNotNullOrEmpty()) {
@@ -135,7 +138,7 @@ fun Channel(modifier: Modifier, viewModel: MainViewModel) {
                         HorizontalDivider(modifier = Modifier.padding(all = 16.dp), color = MaterialTheme.colorScheme.tertiary, thickness = 1.dp)
                     }
                     item {
-                        CategoryFlowRow(categories = viewModel.mediaStateCategories.value.data)
+                        CategoryFlowRow(categories = categoryList)
                     }
                 }
             }

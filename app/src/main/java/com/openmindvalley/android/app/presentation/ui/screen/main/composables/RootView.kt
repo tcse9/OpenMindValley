@@ -15,7 +15,6 @@ import com.openmindvalley.android.app.presentation.ui.screen.main.viewmodel.Main
 
 @Composable
 fun RootView(paddingValues: PaddingValues, viewModel: MainViewModel = hiltViewModel()) {
-
     var allDataHasLoaded by remember { mutableStateOf(false) }
     viewModel.allDataLoaded.asLiveData().observe(LocalLifecycleOwner.current) {
         allDataHasLoaded = it
