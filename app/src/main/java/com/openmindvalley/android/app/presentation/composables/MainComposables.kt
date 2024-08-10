@@ -72,7 +72,6 @@ import com.openmindvalley.android.app.presentation.theme.ChannelHeaderGradient2
 import com.openmindvalley.android.app.presentation.theme.OpenMindValleyTheme
 import com.openmindvalley.android.app.presentation.theme.RootTitle
 import com.openmindvalley.android.app.presentation.theme.SecondaryRootTitle
-import com.openmindvalley.android.app.presentation.theme.SecondaryRootTitleWhite
 import com.openmindvalley.android.app.presentation.theme.TextPrimary
 import com.openmindvalley.android.app.presentation.theme.TextSecondary
 import com.openmindvalley.android.app.presentation.theme.ThumbnailSubtitle
@@ -226,7 +225,7 @@ fun ChannelHeader(title: String, subTitle: String?, iconUrl: String? = null) {
         Spacer(modifier = Modifier.width(width = 16.dp))
         Column {
             if (title.isNotNullOrEmpty()) {
-                Text(text = title, style = MaterialTheme.typography.SecondaryRootTitleWhite)
+                Text(text = title, style = MaterialTheme.typography.SecondaryRootTitle.copy(color = TextPrimary))
             }
             if (subTitle.isNotNullOrEmpty()) {
                 Spacer(modifier = Modifier.height(height = 8.dp))
@@ -339,7 +338,7 @@ fun LoadMoreThumbnail(isPortrait: Boolean = true) {
             Text(
                 text = stringResource(R.string.load_more),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White)
+                style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = TextPrimary)
             )
         }
     }
@@ -373,10 +372,10 @@ fun ErrorView(errorTitle: String? = stringResource(id = R.string.error), errorMe
             Text(text = errorTitle ?: "", style = MaterialTheme.typography.ThumbnailTitle, textAlign = TextAlign.Center)
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = errorMessage ?: "", style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White), textAlign = TextAlign.Center)
+        Text(text = errorMessage ?: "", style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = TextPrimary), textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedButton(onClick = { onRetryClicked() }) {
-            Text(text = stringResource(R.string.retry), style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = Color.White), textAlign = TextAlign.Center)
+            Text(text = stringResource(R.string.retry), style = MaterialTheme.typography.ThumbnailSubtitle.copy(color = TextPrimary), textAlign = TextAlign.Center)
         }
 
     }
