@@ -1,4 +1,4 @@
-package com.openmindvalley.android.app.presentation.state
+package com.openmindvalley.android.app.presentation.ui.screen.main.state
 
 import com.openmindvalley.android.app.data.remote.dto.ErrorDto
 import com.openmindvalley.android.app.domain.model.Media
