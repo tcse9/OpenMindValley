@@ -1,4 +1,4 @@
-package com.openmindvalley.android.app.presentation.ui.screen.main
+package com.openmindvalley.android.app.presentation.ui.screen.main.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
