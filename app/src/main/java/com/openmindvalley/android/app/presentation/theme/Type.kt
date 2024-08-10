@@ -6,23 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        color = TextHeaderPrimary,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    )
-)
+val Typography = Typography()
 
 val Typography.RootTitle: TextStyle
     get() = TextStyle(
@@ -42,17 +26,6 @@ val Typography.SecondaryRootTitle: TextStyle
         lineHeight = 32.sp,
         letterSpacing = 1.sp
     )
-
-val Typography.SecondaryRootTitleWhite: TextStyle
-    get() = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight(700),
-        fontSize = 24.sp,
-        color = TextPrimary,
-        lineHeight = 32.sp,
-        letterSpacing = 1.sp
-    )
-
 
 val Typography.ThumbnailTitle: TextStyle
     get() = TextStyle(

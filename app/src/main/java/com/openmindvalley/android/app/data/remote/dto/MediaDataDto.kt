@@ -6,19 +6,16 @@ import com.openmindvalley.android.app.domain.model.ThumbnailItem
 import com.openmindvalley.android.app.utils.isNotNullOrEmpty
 
 data class MediaDataDto(
-
 	@field:SerializedName("data")
 	val data: Data? = null
 )
 
 data class CoverAsset(
-
 	@field:SerializedName("url")
 	val url: String? = null
 )
 
 data class Data(
-
 	@field:SerializedName("media")
 	val media: List<MediaItem?>? = null,
 
@@ -30,13 +27,11 @@ data class Data(
 )
 
 data class Channel(
-
 	@field:SerializedName("title")
 	val title: String? = null
 )
 
 data class MediaItem(
-
 	@field:SerializedName("channel")
 	val channel: Channel? = null,
 
@@ -51,7 +46,6 @@ data class MediaItem(
 )
 
 data class ChannelsItem(
-
 	@field:SerializedName("series")
 	val series: List<SeriesItem?>? = null,
 
@@ -78,7 +72,6 @@ data class ChannelsItem(
 )
 
 data class SeriesItem(
-
 	@field:SerializedName("title")
 	val title: String? = null,
 
@@ -90,7 +83,6 @@ data class SeriesItem(
 )
 
 data class IconAsset(
-
 	@field:SerializedName("thumbnailUrl")
 	val thumbnailUrl: String? = null,
 
@@ -99,7 +91,6 @@ data class IconAsset(
 )
 
 data class LatestMediaItem(
-
 	@field:SerializedName("type")
 	val type: String? = null,
 
@@ -111,7 +102,6 @@ data class LatestMediaItem(
 )
 
 data class CategoriesItem(
-
 	@field:SerializedName("name")
 	val name: String? = null
 )
