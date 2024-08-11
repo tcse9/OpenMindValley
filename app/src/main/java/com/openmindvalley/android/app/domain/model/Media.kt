@@ -1,5 +1,10 @@
 package com.openmindvalley.android.app.domain.model
 
+/**
+ * This is a base model class for any kind of media data,
+ * if in future another kind of media appears we can take the advantage ofg this sealed class
+ * to generate another kind of media data model class
+ */
 sealed class Media {
     open val title: String? = null
     open val iconImage: String? = null

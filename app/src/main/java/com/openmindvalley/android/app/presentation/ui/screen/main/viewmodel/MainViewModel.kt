@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         observerForAllData()
     }
 
-    private fun getMediaNewEpisode(mediaType: String) {
+    fun getMediaNewEpisode(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -56,7 +56,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
-    private fun getMediaChannel(mediaType: String) {
+    fun getMediaChannel(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
-    private fun getMediaCategories(mediaType: String) {
+    fun getMediaCategories(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -98,12 +98,15 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
+    // loading all the data i.e. all the api
     fun loadData() {
         getMediaNewEpisode("z5AExTtw")
         getMediaChannel("Xt12uVhM")
         getMediaCategories("A0CgArX3")
     }
 
+    // this method is used for combining all the response status to know
+    // if all the apis are done fething data
     private fun observerForAllData() {
         viewModelScope.launch {
             combine(mediaStateNewEpisode, mediaStateChannel, mediaStateCategories) { d1, d2, d3 ->
