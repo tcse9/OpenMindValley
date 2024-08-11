@@ -106,6 +106,8 @@ data class CategoriesItem(
 	val name: String? = null
 )
 
+// this method converts a dto to original model data which are consumed by the UI
+// in this case its converts a list of MediaItem data to List of Media
 fun List<MediaItem?>?.toMediaNewEpisode(): List<Media.NewEpisode> {
 	val thumbnailItems = arrayListOf<ThumbnailItem>()
 	this?.forEach {
@@ -120,6 +122,8 @@ fun List<MediaItem?>?.toMediaNewEpisode(): List<Media.NewEpisode> {
 	return listOf(Media.NewEpisode(list = thumbnailItems))
 }
 
+// this method converts a dto to original model data which are consumed by the UI
+// in this case its converts a list of ChannelsItem data to List of Media
 fun List<ChannelsItem?>?.toMediaCourse(): List<Media> {
 	val mediaCourses = arrayListOf<Media.Course>()
 	this?.forEach { item ->
@@ -148,6 +152,8 @@ fun List<ChannelsItem?>?.toMediaCourse(): List<Media> {
 	return mediaCourses
 }
 
+// this method converts a dto to original model data which are consumed by the UI
+// in this case its converts a list of CategoriesItem data to List of Media
 fun List<CategoriesItem?>?.toMediaCategories(): List<Media.Category> {
 	val mediaCategories = arrayListOf<Media.Category>()
 	val names = arrayListOf<String>()

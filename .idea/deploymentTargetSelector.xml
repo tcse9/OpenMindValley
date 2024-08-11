@@ -16,9 +16,6 @@
       <SelectionState runConfigName="MainViewModelTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="loadData_should_update_mediaStateChannel()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="loadData_should_update_mediaStateNewEpisode()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.sp
 
 val Typography = Typography()
 
+// Defining own typography styles
 val Typography.RootTitle: TextStyle
     get() = TextStyle(
         fontFamily = FontFamily.Default,

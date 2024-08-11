@@ -16,6 +16,11 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
+/**
+ * This is an additional use case class from added domain layer.
+ * Using this layer prevents changes done in UI layer if the actual
+ * responses from data are changed due to refactoring etc.
+ */
 open class MediaDataByUseCase @Inject constructor(private val context: Context, private val repository: MediaRepository) {
     open operator fun invoke(mediaType: String): Flow<Resource<List<Media>>> = flow {
         try {

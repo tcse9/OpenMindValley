@@ -6,6 +6,9 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import javax.inject.Inject
 
+/**
+ * This class serves as a network related utility provider
+ */
 class NetworkUtils @Inject constructor(private val context: Context) {
     val isInternetConnected: Boolean
         get() {
