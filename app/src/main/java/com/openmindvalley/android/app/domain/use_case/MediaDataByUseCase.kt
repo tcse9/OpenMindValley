@@ -17,7 +17,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 open class MediaDataByUseCase @Inject constructor(private val context: Context, private val repository: MediaRepository) {
-    operator fun invoke(mediaType: String): Flow<Resource<List<Media>>> = flow {
+    open operator fun invoke(mediaType: String): Flow<Resource<List<Media>>> = flow {
         try {
             emit(Resource.Loading())
             val data = repository.getMediaData(mediaType = mediaType)

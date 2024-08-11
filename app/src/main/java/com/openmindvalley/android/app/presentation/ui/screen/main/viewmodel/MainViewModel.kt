@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         observerForAllData()
     }
 
-    private fun getMediaNewEpisode(mediaType: String) {
+    fun getMediaNewEpisode(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -56,7 +56,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
-    private fun getMediaChannel(mediaType: String) {
+    fun getMediaChannel(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(private val mediaDataByUseCase: MediaDat
         }.launchIn(viewModelScope)
     }
 
-    private fun getMediaCategories(mediaType: String) {
+    fun getMediaCategories(mediaType: String) {
         mediaDataByUseCase(mediaType).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
