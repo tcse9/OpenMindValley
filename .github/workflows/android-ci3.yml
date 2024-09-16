@@ -23,7 +23,7 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Authenticate with Firebase
-        run: firebase login --no-interactive --token $(cat /path/to/your/service_account_key.json)
+        run: firebase login --no-interactive --token $(cat app/google-services.json)
 
       - name: Distribute APK
         run: firebase appdistribution:distribute --app android:your_firebase_app_id --apk app/build/outputs/apk/debug/app-debug.apk
