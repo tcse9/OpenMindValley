@@ -43,11 +43,5 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleDebug
 
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Authenticate with Firebase
-        run: firebase login --no-interactive --token $(cat app/openmindvalley-service-account.json)
-
       - name: Distribute APK
         run: firebase appdistribution:distribute --app android:1:473619344732:android:598642f8174aac09efa599 --apk app/build/outputs/apk/debug/app-debug.apk --group-name="testers"
