@@ -41,7 +41,7 @@ jobs:
           touch ~/.android/repositories.cfg
 
       - name: Build APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug appDistributionUploadDebug
 
       - name: Upload APK to Firebase App Distribution
         env:
