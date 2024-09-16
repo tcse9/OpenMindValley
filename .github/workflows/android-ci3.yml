@@ -26,4 +26,4 @@ jobs:
         run: firebase login --no-interactive --token $(cat app/google-services.json)
 
       - name: Distribute APK
-        run: firebase appdistribution:distribute --app android:your_firebase_app_id --apk app/build/outputs/apk/debug/app-debug.apk
+        run: firebase appdistribution:distribute --app android:1:473619344732:android:598642f8174aac09efa599 --apk app/build/outputs/apk/debug/app-debug.apk
