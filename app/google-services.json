@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473619344732",
+    "project_id": "openmindvalley",
+    "storage_bucket": "openmindvalley.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473619344732:android:598642f8174aac09efa599",
+        "android_client_info": {
+          "package_name": "com.openmindvalley.android.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKf8M_Qi_urXB12Ahld_6TwXfLAHVQlIk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

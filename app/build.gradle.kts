@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.google.firebase.appdistribution)
 }
 
 android {
@@ -30,6 +33,12 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug {
+            firebaseAppDistribution {
+                testers="taufiq.dev9@gmail.com"
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -53,7 +62,7 @@ android {
         )
     }
     testOptions {
-        packagingOptions {
+        packaging {
             jniLibs {
                 useLegacyPackaging = true
             }
@@ -76,6 +85,8 @@ dependencies {
     implementation(libs.hilt.compose)
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     kapt(libs.hilt.compiler)
 
     implementation(libs.retrofit)
