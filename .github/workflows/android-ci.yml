@@ -3,7 +3,7 @@ name: Android CI
 on:
   push:
     branches:
-      - main
+      - android-ci
   pull_request:
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Decrypt and setup Keystore
         run: |
-          echo "${ANDROID_KEYSTORE}" | base64 --decode > release-keystore.jks
+          echo "${ANDROID_KEYSTORE}" | base64 --decode > debug.keystore
           mkdir -p ~/.android/
           touch ~/.android/repositories.cfg
 
