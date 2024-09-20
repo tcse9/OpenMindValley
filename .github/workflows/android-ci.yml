@@ -11,7 +11,7 @@ on:
 
   push:
     branches:
-      - android-ci3
+      - main
 
   pull_request:
 
