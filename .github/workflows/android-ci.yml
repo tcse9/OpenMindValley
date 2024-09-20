@@ -9,6 +9,12 @@ on:
         required: true
         default: 'main'  # Default to the main branch if no input is provided
 
+  push:
+    branches:
+      - android-ci3
+
+  pull_request:
+
 jobs:
   build:
     runs-on: ubuntu-latest
