@@ -36,7 +36,8 @@ android {
 
         debug {
             firebaseAppDistribution {
-                groups="testers"
+                groups = "testers"
+                testers = "taufiq.dev9@gmail.com"
             }
         }
     }
