@@ -6,3 +6,5 @@ data class ThumbnailItem(
     val thumbnailImage: String?,
     val isPortrait: Boolean? = true
 )
+
+
