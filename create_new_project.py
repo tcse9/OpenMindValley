@@ -1,5 +1,7 @@
 # to run this project run the following command in terminal:
 # python3 create_new_project.py NewProjectName com.newproject.package.name
+# after this, change old package name in: app level build.gradle file, manifest file also change
+# the project name in settings.gradle file i.e. rootProject.name = "NewProjectName"
 import os
 import subprocess
 import sys
